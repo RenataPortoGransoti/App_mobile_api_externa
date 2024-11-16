@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 
 class CadastroActivity : AppCompatActivity() {
 
+    // Lista de tarefas (armazenamento temporário na memória)
+    private val taskList = mutableListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cadastro)
@@ -19,19 +22,15 @@ class CadastroActivity : AppCompatActivity() {
             val task = editTextTask.text.toString()
 
             if (task.isNotEmpty()) {
-                // Aqui você pode adicionar a tarefa ao banco de dados ou lista
-                addTaskToList(task)
+                taskList.add(task)
 
-                // Limpar o campo e mostrar a mensagem de sucesso
                 editTextTask.text.clear()
+
                 Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show()
+                println("Tarefas cadastradas: $taskList")
             } else {
                 Toast.makeText(this, "Por favor, insira uma tarefa.", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun addTaskToList(task: String) {
-        // Aqui você pode salvar a tarefa no banco de dados ou em uma lista
     }
 }
