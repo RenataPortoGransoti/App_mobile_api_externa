@@ -1,5 +1,6 @@
 package com.example.appapiexterna
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -17,6 +18,7 @@ class CadastroActivity : AppCompatActivity() {
 
         val editTextTask = findViewById<EditText>(R.id.editTextTask)
         val buttonAddTask = findViewById<Button>(R.id.buttonAddTask)
+        val buttonViewTasks = findViewById<Button>(R.id.buttonViewTasks)
 
         buttonAddTask.setOnClickListener {
             val task = editTextTask.text.toString()
@@ -31,6 +33,12 @@ class CadastroActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Por favor, insira uma tarefa.", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        buttonViewTasks.setOnClickListener {
+            val intent = Intent(this, ListagemActivity::class.java)
+            intent.putStringArrayListExtra("TASK_LIST", ArrayList(taskList))
+            startActivity(intent)
         }
     }
 }

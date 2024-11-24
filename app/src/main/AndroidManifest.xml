@@ -18,6 +18,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ListagemActivity" />
+
         <activity android:name=".MainActivity" />
 
     </application>
