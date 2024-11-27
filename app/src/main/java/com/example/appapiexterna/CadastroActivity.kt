@@ -16,14 +16,15 @@ class CadastroActivity : AppCompatActivity() {
         val editTextTask = findViewById<EditText>(R.id.editTextTask)
         val buttonAddTask = findViewById<Button>(R.id.buttonAddTask)
         val buttonViewTasks = findViewById<Button>(R.id.buttonViewTasks)
+        val btnGoToApi = findViewById<Button>(R.id.btnGoToApi)
 
         buttonAddTask.setOnClickListener {
             val task = editTextTask.text.toString()
 
             if (task.isNotEmpty()) {
-                val taskList = loadTasks() // Carregar lista atual
-                taskList.add(task) // Adicionar nova tarefa
-                saveTasks(taskList) // Salvar lista atualizada
+                val taskList = loadTasks()
+                taskList.add(task)
+                saveTasks(taskList)
 
                 editTextTask.text.clear()
                 Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show()
@@ -49,5 +50,10 @@ class CadastroActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("TASK_PREFS", MODE_PRIVATE)
         val taskSet = sharedPreferences.getStringSet("TASK_LIST", emptySet())
         return taskSet?.toMutableList() ?: mutableListOf()
+    }
+
+    btnGoToApi.setOnClickListener{
+        val intent = Intent(this, ApiActivity:class.java)
+        startActivity(intent)
     }
 }
