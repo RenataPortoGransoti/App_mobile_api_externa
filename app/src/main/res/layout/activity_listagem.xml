@@ -6,21 +6,30 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/textViewEmptyMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Não há tarefas cadastradas"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@android:color/darker_gray"
+        android:padding="16dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTasks"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:dividerHeight="8dp"
-        android:clipToPadding="false" />
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/buttonAddMoreTasks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#000000"
-        android:padding="15dp"
-        android:text="@string/adicionar_tarefas"
+        android:background="#1ABC9C"
+        android:text="Adicionar tarefas"
         android:textColor="#FFFFFF"
+        android:padding="16dp"
         android:layout_marginTop="8dp" />
 </LinearLayout>
