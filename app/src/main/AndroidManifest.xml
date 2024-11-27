@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.appapiexterna">
 
+    <!-- Permissão para acesso à internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +13,7 @@
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
 
         <activity
-            android:name=".CadastroActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,8 +22,9 @@
         </activity>
 
         <activity android:name=".ListagemActivity" />
-
+        <activity android:name=".CadastroActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".ApiActivity" />
 
     </application>
 </manifest>
