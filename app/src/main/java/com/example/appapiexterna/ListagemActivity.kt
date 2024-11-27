@@ -14,7 +14,7 @@ class ListagemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listagem)
 
-        val taskList = loadTasks() // Carregar tarefas salvas
+        val taskList = loadTasks().toMutableList()
 
         if (taskList.isEmpty()) {
             Toast.makeText(this, "Nenhuma tarefa cadastrada!", Toast.LENGTH_SHORT).show()
@@ -22,8 +22,15 @@ class ListagemActivity : AppCompatActivity() {
 
         val recyclerViewTasks = findViewById<RecyclerView>(R.id.recyclerViewTasks)
         recyclerViewTasks.layoutManager = LinearLayoutManager(this)
-        recyclerViewTasks.adapter = TaskAdapter(taskList)
 
+        val adapter = TaskAdapter(taskList) { removedTask ->
+            saveTasks(taskList)
+            Toast.makeText(this, "Tarefa removida: $removedTask", Toast.LENGTH_SHORT).show()
+        }
+
+        recyclerViewTasks.adapter = adapter
+
+        // Botão para adicionar mais tarefas
         val buttonAddMoreTasks = findViewById<Button>(R.id.buttonAddMoreTasks)
         buttonAddMoreTasks.setOnClickListener {
             val intent = Intent(this, CadastroActivity::class.java)
@@ -31,9 +38,18 @@ class ListagemActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadTasks(): MutableList<String> {
+    // Salva a lista de tarefas no SharedPreferences
+    private fun saveTasks(taskList: List<String>) {
+        val sharedPreferences = getSharedPreferences("TASK_PREFS", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putStringSet("TASK_LIST", taskList.toSet())
+        editor.apply()
+    }
+
+    // Carrega a lista de tarefas do SharedPreferences
+    private fun loadTasks(): List<String> {
         val sharedPreferences = getSharedPreferences("TASK_PREFS", MODE_PRIVATE)
         val taskSet = sharedPreferences.getStringSet("TASK_LIST", emptySet())
-        return taskSet?.toMutableList() ?: mutableListOf()
+        return taskSet?.toList() ?: emptyList()
     }
 }
