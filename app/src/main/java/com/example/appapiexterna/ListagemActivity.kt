@@ -14,8 +14,7 @@ class ListagemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listagem)
 
-        // obtendo a lista de tarefas passada pela intent
-        val taskList = intent.getStringArrayListExtra("TASK_LIST") ?: arrayListOf()
+        val taskList = loadTasks() // Carregar tarefas salvas
 
         if (taskList.isEmpty()) {
             Toast.makeText(this, "Nenhuma tarefa cadastrada!", Toast.LENGTH_SHORT).show()
@@ -30,8 +29,11 @@ class ListagemActivity : AppCompatActivity() {
             val intent = Intent(this, CadastroActivity::class.java)
             startActivity(intent)
         }
-
     }
 
+    private fun loadTasks(): MutableList<String> {
+        val sharedPreferences = getSharedPreferences("TASK_PREFS", MODE_PRIVATE)
+        val taskSet = sharedPreferences.getStringSet("TASK_LIST", emptySet())
+        return taskSet?.toMutableList() ?: mutableListOf()
+    }
 }
-

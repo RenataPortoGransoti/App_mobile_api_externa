@@ -9,9 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 class CadastroActivity : AppCompatActivity() {
 
-    // Lista de tarefas (armazenamento temporário na memória)
-    private val taskList = mutableListOf<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cadastro)
@@ -24,12 +21,12 @@ class CadastroActivity : AppCompatActivity() {
             val task = editTextTask.text.toString()
 
             if (task.isNotEmpty()) {
-                taskList.add(task)
+                val taskList = loadTasks() // Carregar lista atual
+                taskList.add(task) // Adicionar nova tarefa
+                saveTasks(taskList) // Salvar lista atualizada
 
                 editTextTask.text.clear()
-
                 Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show()
-                println("Tarefas cadastradas: $taskList")
             } else {
                 Toast.makeText(this, "Por favor, insira uma tarefa.", Toast.LENGTH_SHORT).show()
             }
@@ -37,8 +34,20 @@ class CadastroActivity : AppCompatActivity() {
 
         buttonViewTasks.setOnClickListener {
             val intent = Intent(this, ListagemActivity::class.java)
-            intent.putStringArrayListExtra("TASK_LIST", ArrayList(taskList))
             startActivity(intent)
         }
+    }
+
+    private fun saveTasks(taskList: MutableList<String>) {
+        val sharedPreferences = getSharedPreferences("TASK_PREFS", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putStringSet("TASK_LIST", taskList.toSet())
+        editor.apply()
+    }
+
+    private fun loadTasks(): MutableList<String> {
+        val sharedPreferences = getSharedPreferences("TASK_PREFS", MODE_PRIVATE)
+        val taskSet = sharedPreferences.getStringSet("TASK_LIST", emptySet())
+        return taskSet?.toMutableList() ?: mutableListOf()
     }
 }
