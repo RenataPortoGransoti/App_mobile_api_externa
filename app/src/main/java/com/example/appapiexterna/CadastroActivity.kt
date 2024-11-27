@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+
 class CadastroActivity : AppCompatActivity() {
 
     // Lista de tarefas (armazenamento temporário na memória)
@@ -19,6 +20,10 @@ class CadastroActivity : AppCompatActivity() {
         val editTextTask = findViewById<EditText>(R.id.editTextTask)
         val buttonAddTask = findViewById<Button>(R.id.buttonAddTask)
         val buttonViewTasks = findViewById<Button>(R.id.buttonViewTasks)
+
+
+
+
 
         buttonAddTask.setOnClickListener {
             val task = editTextTask.text.toString()
@@ -40,5 +45,6 @@ class CadastroActivity : AppCompatActivity() {
             intent.putStringArrayListExtra("TASK_LIST", ArrayList(taskList))
             startActivity(intent)
         }
+
     }
 }

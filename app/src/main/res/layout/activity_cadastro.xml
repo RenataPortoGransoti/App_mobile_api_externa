@@ -46,4 +46,14 @@
         android:layout_below="@+id/buttonAddTask"
         android:layout_marginTop="16dp" />
 
+    <Button
+        android:id="@+id/btnGoToApi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ir para API"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        />
+
+
 </LinearLayout>
