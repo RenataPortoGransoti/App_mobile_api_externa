@@ -58,9 +58,4 @@ class CadastroActivity : AppCompatActivity() {
         val taskSet = sharedPreferences.getStringSet("TASK_LIST", emptySet())
         return taskSet?.toMutableList() ?: mutableListOf()
     }
-
-    btnGoToApi.setOnClickListener{
-        val intent = Intent(this, ApiActivity:class.java)
-        startActivity(intent)
-    }
 }
