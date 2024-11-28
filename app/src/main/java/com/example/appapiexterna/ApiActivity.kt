@@ -2,24 +2,17 @@ package com.example.appapiexterna
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.appapiexterna.api.Data // Importa a classe Data
+import com.example.appapiexterna.api.Data
 import com.example.appapiexterna.api.GetDataResponse
-import com.example.appapiexterna.api.SaveDataRequest // Importa a classe SaveDataRequest
-import com.example.appapiexterna.api.SaveDataResponse // Importa a classe SaveDataResponse
+import com.example.appapiexterna.api.SaveDataRequest
+import com.example.appapiexterna.api.SaveDataResponse
 import com.example.appapiexterna.api.UserData
 import com.example.appapiexterna.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
-
-
 
 class ApiActivity : AppCompatActivity() {
 
@@ -27,109 +20,86 @@ class ApiActivity : AppCompatActivity() {
     private lateinit var etEmail: EditText
     private lateinit var etTelefone: EditText
     private lateinit var btnSalvar: Button
-    private lateinit var btnCarregar: Button // Botão para carregar os dados
+    private lateinit var btnCarregar: Button
+    private lateinit var listView: ListView
+    private lateinit var adapter: ArrayAdapter<String>
+    private val userDataList: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Defina o layout da activity
         setContentView(R.layout.activity_api)
 
-        // Inicializando os campos
+        // Inicializando os componentes da interface
         etNome = findViewById(R.id.etNome)
         etEmail = findViewById(R.id.etEmail)
         etTelefone = findViewById(R.id.etTelefone)
         btnSalvar = findViewById(R.id.btnSalvar)
         btnCarregar = findViewById(R.id.btnCarregar)
+        listView = findViewById(R.id.listView)
 
-        // Configurando o botão de salvar
-        btnSalvar.setOnClickListener {
-            salvarDados()
-        }
+        // Configurando o ArrayAdapter para exibir os dados na ListView
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, userDataList)
+        listView.adapter = adapter
 
-        // Configurando o botão de carregar
-        btnCarregar.setOnClickListener {
-            carregarDados()
-        }
+        // Ações dos botões
+        btnSalvar.setOnClickListener { salvarDados() }
+        btnCarregar.setOnClickListener { carregarDados() }
     }
 
-    // Função para salvar os dados
     private fun salvarDados() {
         val nome = etNome.text.toString()
         val email = etEmail.text.toString()
         val telefone = etTelefone.text.toString()
 
-        // Verificar se os campos estão preenchidos
         if (nome.isEmpty() || email.isEmpty() || telefone.isEmpty()) {
             Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Criar o objeto Data com os valores dos campos
         val data = Data(nome, email, telefone)
-
-        // Criar o objeto SaveDataRequest com o Data
         val saveDataRequest = SaveDataRequest(data)
+        val token = getSavedToken()
 
-        // Obter o token (este é o token que você obteve após o login)
-        val token = getSavedToken()  // Função que você já deve ter implementado para pegar o token salvo
-
-        // Verificar se o token foi encontrado
         if (token != null) {
             val apiService = RetrofitClient.getApiService()
-
-            // Fazer a requisição para salvar os dados
             apiService.saveData(saveDataRequest, "Bearer $token").enqueue(object : Callback<SaveDataResponse> {
                 override fun onResponse(call: Call<SaveDataResponse>, response: Response<SaveDataResponse>) {
                     if (response.isSuccessful) {
-                        // Adiciona log detalhado da resposta JSON
-                        Log.d("ApiActivity", "Resposta da API (Salvar): ${response.body()}")
+                        Log.d("ApiActivity", "Dados salvos: ${response.body()}")
                         Toast.makeText(this@ApiActivity, "Dados salvos com sucesso!", Toast.LENGTH_SHORT).show()
                     } else {
-                        // Log caso a resposta não seja bem-sucedida
                         Log.e("ApiActivity", "Erro ao salvar dados: ${response.code()}")
                         Toast.makeText(this@ApiActivity, "Erro ao salvar dados: ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<SaveDataResponse>, t: Throwable) {
-                    // Log caso a requisição falhe
-                    Log.e("ApiActivity", "Falha na requisição: ${t.message}")
-                    Toast.makeText(this@ApiActivity, "Falha na requisição: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("ApiActivity", "Falha ao salvar dados: ${t.message}")
+                    Toast.makeText(this@ApiActivity, "Falha ao salvar dados: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
-
         } else {
-            // Se o token não for encontrado
             Toast.makeText(this, "Token não encontrado!", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Função para carregar os dados
     private fun carregarDados() {
-        val token = getSavedToken()  // Pega o token salvo anteriormente
+        val token = getSavedToken()
 
         if (token != null) {
             val apiService = RetrofitClient.getApiService()
-
-// Dentro da função carregarDados
             apiService.getData("Bearer $token").enqueue(object : Callback<List<UserData>> {
                 override fun onResponse(call: Call<List<UserData>>, response: Response<List<UserData>>) {
                     if (response.isSuccessful) {
-                        // Adiciona log detalhado da resposta JSON
-                        Log.d("ApiActivity", "Resposta da API (Carregar): ${response.body()}")
                         val dados = response.body()
                         if (dados != null) {
+                            userDataList.clear()
                             for (userData in dados) {
-                                val nome = userData.nome
-                                val email = userData.email
-                                val telefone = userData.telefone
-
-                                // Exibe os dados no log
-                                Log.d("ApiActivity", "Nome: $nome, Email: $email, Telefone: $telefone")
+                                val item = "Nome: ${userData.nome}\nEmail: ${userData.email}\nTelefone: ${userData.telefone}"
+                                userDataList.add(item)
                             }
-
-                            Toast.makeText(this@ApiActivity, "Dados recebidos com sucesso!", Toast.LENGTH_SHORT).show()
+                            adapter.notifyDataSetChanged()
+                            Toast.makeText(this@ApiActivity, "Dados carregados com sucesso!", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         Log.e("ApiActivity", "Erro ao carregar dados: ${response.code()}")
@@ -138,12 +108,10 @@ class ApiActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<List<UserData>>, t: Throwable) {
-                    // Log caso a requisição falhe
-                    Log.e("ApiActivity", "Falha na requisição: ${t.message}")
-                    Toast.makeText(this@ApiActivity, "Falha na requisição: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("ApiActivity", "Falha ao carregar dados: ${t.message}")
+                    Toast.makeText(this@ApiActivity, "Falha ao carregar dados: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
-
         } else {
             Toast.makeText(this, "Token não encontrado!", Toast.LENGTH_SHORT).show()
         }

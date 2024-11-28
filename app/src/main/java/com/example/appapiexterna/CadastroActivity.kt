@@ -7,7 +7,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-
 class CadastroActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,9 +17,6 @@ class CadastroActivity : AppCompatActivity() {
         val buttonAddTask = findViewById<Button>(R.id.buttonAddTask)
         val buttonViewTasks = findViewById<Button>(R.id.buttonViewTasks)
         val btnGoToApi = findViewById<Button>(R.id.btnGoToApi)
-
-
-
 
 
         buttonAddTask.setOnClickListener {
@@ -40,6 +36,11 @@ class CadastroActivity : AppCompatActivity() {
 
         buttonViewTasks.setOnClickListener {
             val intent = Intent(this, ListagemActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnGoToApi.setOnClickListener {
+            val intent = Intent(this, ApiActivity::class.java)
             startActivity(intent)
         }
 
